@@ -6,6 +6,17 @@
 //
 
 #include <iostream>
+#include <exception>
+
+class ErrorException : public std::exception
+{
+public:
+   const  char* what() const noexcept override
+   {
+       return "Wrong index!";
+   }
+};
+
 
 template<class T>
 class my_vector
@@ -13,23 +24,37 @@ class my_vector
 private:
     unsigned size = 0;
     unsigned capacity = 1;
-    T **arr = new T*[size];
-    T value;
-    int index;
+    T *arr = new T[size];
 public:
-    my_vector(){}
-
-    T* at(int index) const
+    my_vector()
     {
-        T* elem;
-        if(index < size)
+        this->size = size;
+        this->capacity = capacity;
+        this->arr = arr;
+    }
+    
+    my_vector (const my_vector &other)
+    {
+        this->size = other.size;
+        this->capacity = other.capacity;
+        this->arr = other.arr;
+    }
+    
+    ~my_vector()
+    {
+        delete [] arr;
+    }
+
+    T at(int index) const
+    {
+        T elem;
+        if(index < size && index > 0)
           {
                elem = arr[index];
           }
         else
           {
-              std::cout << "Error.Wrong index!" << '\n';
-              return nullptr;
+              throw ErrorException();
           }
         return elem;
     }
@@ -39,7 +64,7 @@ public:
         if(size == capacity)
         {
             capacity = capacity*2;
-            T** new_arr = new T*[capacity];
+            T* new_arr = new T[capacity];
             for(int index = 0; index < size; ++index)
             {
                 new_arr[index] = arr[index];
@@ -47,7 +72,7 @@ public:
             delete[] arr;
             arr = new_arr;
         }
-            arr[size] = &value;
+            arr[size] = value;
             ++size;
      
     }
@@ -74,7 +99,12 @@ int main(int argc, const char * argv[]) {
     v1.push_back(5);
     v1.push_back(1);
 
-    std::cout << "Your index is: " << 2 << std::endl << "Element is: " << v1.at(1) << '\n';
+    try {
+        std::cout << "Your index is: " << 2 << std::endl << "Element is: " << v1.at(1) << '\n';
+    } catch (const ErrorException& ex) {
+        std::cout << ex.what() << std::endl;
+    }
+//    std::cout << "Your index is: " << 2 << std::endl << "Element is: " << v1.at(1) << '\n';
     std::cout << "Vector size is: " << v1.Size() << '\n';
     std::cout << "Vector capacity is: " << v1.Capacity() << '\n';
 
