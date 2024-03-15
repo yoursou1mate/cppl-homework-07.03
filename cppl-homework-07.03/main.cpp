@@ -23,15 +23,10 @@ class my_vector
 {
 private:
     unsigned size = 0;
-    unsigned capacity = 1;
+    unsigned capacity = size+1;
     T *arr = new T[size];
 public:
-    my_vector()
-    {
-        this->size = size;
-        this->capacity = capacity;
-        this->arr = arr;
-    }
+    my_vector(){}
     
     my_vector (const my_vector &other)
     {
@@ -48,7 +43,7 @@ public:
     T at(int index) const
     {
         T elem;
-        if(index < size && index > 0)
+        if(index < size && index >= 1)
           {
                elem = arr[index];
           }
