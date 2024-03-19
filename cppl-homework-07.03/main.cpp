@@ -23,18 +23,46 @@ class my_vector
 {
 private:
     unsigned size = 0;
-    unsigned capacity = size+1;
+    unsigned capacity = 0;
     T *arr = new T[size];
 public:
-    my_vector(){}
-    
+    my_vector(){++capacity;}
+
     my_vector (const my_vector &other)
     {
-        this->size = other.size;
-        this->capacity = other.capacity;
-        this->arr = other.arr;
+        size = other.size;
+        capacity = other.capacity;
+        arr = new T[size];
+        for (int i = 0; i < size; ++i)
+          {
+            arr[i] = other.arr[i];
+          }
     }
-    
+
+    my_vector (my_vector &&other)
+    {
+     size = other.size;
+     capacity = other.capacity;
+     arr = other.arr;
+     other.size = 0;
+     other.capacity = 0;
+     other.arr = nullptr;
+    }
+    my_vector &operator=(const my_vector &other)
+    {
+     if (this == &other)
+      {
+        return *this;
+      }
+    }
+    my_vector &operator=(my_vector &&other)
+    {
+     if (this == &other)
+      {
+        return *this;
+      }
+    }
+
     ~my_vector()
     {
         delete [] arr;
@@ -42,16 +70,11 @@ public:
 
     T at(int index) const
     {
-        T elem;
-        if(index < size && index >= 1)
-          {
-               elem = arr[index];
-          }
-        else
-          {
-              throw ErrorException();
-          }
-        return elem;
+        if (index < 0 || index >= size)
+        {
+            throw ErrorException();
+        }
+        return arr[index];
     }
 
     void push_back(T value)
@@ -69,7 +92,7 @@ public:
         }
             arr[size] = value;
             ++size;
-     
+
     }
 
     int Size() const
@@ -93,13 +116,16 @@ int main(int argc, const char * argv[]) {
     v1.push_back(21);
     v1.push_back(5);
     v1.push_back(1);
+    v1.push_back(1);
+    v1.push_back(1);
+    v1.push_back(1);
+    v1.push_back(1);
 
     try {
         std::cout << "Your index is: " << 2 << std::endl << "Element is: " << v1.at(1) << '\n';
     } catch (const ErrorException& ex) {
         std::cout << ex.what() << std::endl;
     }
-//    std::cout << "Your index is: " << 2 << std::endl << "Element is: " << v1.at(1) << '\n';
     std::cout << "Vector size is: " << v1.Size() << '\n';
     std::cout << "Vector capacity is: " << v1.Capacity() << '\n';
 
