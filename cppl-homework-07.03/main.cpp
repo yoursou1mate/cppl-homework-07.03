@@ -26,20 +26,20 @@ private:
     unsigned capacity = 0;
     T *arr = new T[size];
 public:
-    my_vector(){++capacity;}
+    my_vector(){}
 
     my_vector (const my_vector &other)
     {
         size = other.size;
         capacity = other.capacity;
-        arr = new T[size];
+        arr = new T[capacity];
         for (int i = 0; i < size; ++i)
           {
             arr[i] = other.arr[i];
           }
     }
 
-    my_vector (my_vector &&other)
+    my_vector (my_vector &&other) noexcept
     {
      size = other.size;
      capacity = other.capacity;
@@ -50,17 +50,12 @@ public:
     }
     my_vector &operator=(const my_vector &other)
     {
-     if (this == &other)
-      {
-        return *this;
-      }
-    }
-    my_vector &operator=(my_vector &&other)
-    {
-     if (this == &other)
-      {
-        return *this;
-      }
+        other.arr = new T[capacity];
+        for (int i = 0; i < size; ++i)
+        {
+            other.arr[i] = arr[i];
+        }
+        delete [] arr;
     }
 
     ~my_vector()
@@ -79,6 +74,10 @@ public:
 
     void push_back(T value)
     {
+        if (capacity == 0)
+        {
+          ++capacity;
+        }
         if(size == capacity)
         {
             capacity = capacity*2;
@@ -89,6 +88,10 @@ public:
             }
             delete[] arr;
             arr = new_arr;
+        }
+        else if (size > capacity)
+        {
+            throw std::exception();
         }
             arr[size] = value;
             ++size;
